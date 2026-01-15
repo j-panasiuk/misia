@@ -37,7 +37,9 @@ customElements.define(
      * @returns {string | null}
      */
     get #exercise() {
-      const val = this.getAttribute("exercise");
+      // const val = this.getAttribute("exercise");
+      const lastId = Array.from(templates.keys()).at(-1);
+      const val = lastId ?? null;
       return val;
     }
 
