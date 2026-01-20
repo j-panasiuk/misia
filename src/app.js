@@ -1,68 +1,144 @@
 // @ts-check
 
+// -- DEFINE EXERCISES --
+
 /**
- * @type {Map<string, HTMLTemplateElement>}
+ * Exercise number followed by exercise letter
+ * @typedef {`${number}${string}`} Exercise
+ * @example "5a", "12c"
+ */
+
+/**
+ * Check if input matches exercise format ("5a" etc)
+ * @param {unknown} val
+ * @returns {val is Exercise}
+ */
+function isExercise(val) {
+  return typeof val === "string" && /^[0-9]+[a-z]$/.test(val);
+}
+
+/**
+ * Attribute to track current exercise. Same for:
+ * - DOM attributes
+ * - URL search param
+ */
+const EXERCISE = "exercise";
+
+/**
+ *
+ * @type {Map<Exercise, HTMLTemplateElement>}
  */
 const templates = new Map();
 
+// Load all exercise templates into global cache
 for (const el of document.querySelectorAll("template")) {
-  if (!el.id) throw new Error(`missing template id: ${el.id}`);
-  if (templates.has(el.id)) throw new Error(`duplicate template id: ${el.id}`);
-  templates.set(el.id, el);
+  const ex = el.getAttribute(EXERCISE);
+
+  if (!ex) throw new Error(`missing exercise attr: ${ex}`);
+  if (!isExercise(ex)) throw new Error(`invalid exercise attr: ${ex}`);
+  if (templates.has(ex)) throw new Error(`duplicate exercise attr: ${ex}`);
+
+  templates.set(ex, el);
 }
 
-customElements.define(
-  "math-exercise",
-  class extends HTMLElement {
-    static observedAttributes = ["exercise"];
+// -- DEFINE PROGRESSION --
 
-    connectedCallback() {
-      const exercise = this.#exercise;
-      console.log("connected", this);
-      this.#render(exercise);
+/**
+ * Define order of exercises
+ * @type {Exercise[]}
+ */
+const progression = Array.from(templates.keys()).sort();
+if (!progression.length) throw new Error(`no exercises found: ${progression}`);
+
+// -- SETUP  --
+
+class MathExercises extends HTMLElement {
+  connectedCallback() {
+    console.log("connected", this);
+    this.#render();
+  }
+
+  #render() {
+    const searchParams = new URLSearchParams(location.search);
+    const exercise = searchParams.get(EXERCISE);
+
+    if (!exercise) {
+      console.log("setting default exercise");
+      const url = new URL(location.href);
+      const firstExercise = /** @type {Exercise} */ (progression[0]);
+      url.searchParams.set(EXERCISE, firstExercise);
+      return location.replace(url);
     }
 
-    /**
-     * @param {string} name
-     * @param {string | null} oldValue
-     * @param {string | null} newValue
-     */
-    attributeChangedCallback(name, oldValue, newValue) {
-      console.log("changed", name, oldValue, newValue);
-      if (name !== "exercise") return;
-      this.#render(newValue);
+    if (!isExercise(exercise)) {
+      throw new Error(`invalid exercise search param: ${exercise}`);
+    }
+    if (!progression.includes(exercise)) {
+      throw new Error(
+        `unknown exercise: ${exercise} (not matching any template)`,
+      );
     }
 
-    /**
-     * @returns {string | null}
-     */
-    get #exercise() {
-      // const val = this.getAttribute("exercise");
-      const lastId = Array.from(templates.keys()).at(-1);
-      const val = lastId ?? null;
-      return val;
-    }
+    this.#renderExercise(exercise);
+    this.#renderHeader();
+    this.#renderFooter(exercise);
+  }
 
-    /**
-     * @param {string} exercise
-     * @returns {HTMLTemplateElement | undefined}
-     */
-    #template(exercise) {
-      const el = templates.get(exercise);
-      return el;
-    }
+  /**
+   * @param {Exercise} exercise
+   */
+  #renderExercise(exercise) {
+    const main = this.querySelector("main");
+    if (!main) throw new Error(`main is missing!`);
 
-    /**
-     * @param {string | null} exercise
-     */
-    #render(exercise) {
-      if (!exercise) return;
+    const template = templates.get(exercise);
+    if (!(template instanceof HTMLTemplateElement))
+      throw new Error(
+        `unexpected template ${template} for exercise ${exercise} (expected HTMLTemplateElement)`,
+      );
 
-      const template = this.#template(exercise);
-      if (!(template instanceof HTMLTemplateElement)) return;
+    main.replaceChildren(template.content.cloneNode(true));
+  }
 
-      const el = template.content.cloneNode(true);
-      this.replaceChildren(el);
-    }
-  },
-);
+  #renderHeader() {
+    const nav = this.querySelector("header > nav");
+    if (!nav) throw new Error(`header > nav is missing!`);
+
+    const links = progression.map((ex) => {
+      let url = new URL(location.href);
+      url.searchParams.set(EXERCISE, ex);
+
+      let link = document.createElement("a");
+      link.innerText = ex;
+      link.href = url.href;
+      return link;
+    });
+
+    nav.replaceChildren(...links);
+  }
+
+  #renderFooter(/** @type {Exercise} */ exercise) {
+    const nav = this.querySelector("footer > nav");
+    if (!nav) throw new Error(`footer > nav is missing!`);
+
+    const actions = [-1, 1].map((step) => {
+      const targetIndex = progression.indexOf(exercise) + step;
+      const targetExercise = progression[targetIndex];
+      if (!targetExercise) return;
+
+      let url = new URL(location.href);
+      url.searchParams.set(EXERCISE, targetExercise);
+
+      let link = document.createElement("a");
+      link.innerText = step < 0 ? "←" : "→";
+      link.href = url.href;
+      return link;
+    });
+
+    nav.replaceChildren(
+      ...actions.filter((el) => el instanceof HTMLAnchorElement),
+    );
+  }
+}
+
+customElements.define("math-exercises", MathExercises);
