@@ -65,12 +65,19 @@ nav {
 }
 nav > a {
   text-decoration: none;
-  background: deepskyblue;
-  color: white;
+  background: white;
+  color: deepskyblue;
   font-size: 1.25rem;
   font-weight: 500;
   padding: 0.25rem 0.5rem;
   border-radius: 0.25rem;
+}
+nav > a[aria-current="page"] {
+  background: deepskyblue;
+  color: white;
+}
+nav > a[aria-current="page"] ~ a {
+  color: gainsboro;
 }
 nav > a:hover {
   opacity: 0.8;

@@ -80,14 +80,11 @@ class MathExercises extends HTMLElement {
     }
 
     this.#renderExercise(exercise);
-    this.#renderHeader();
+    this.#renderHeader(exercise);
     this.#renderFooter(exercise);
   }
 
-  /**
-   * @param {Exercise} exercise
-   */
-  #renderExercise(exercise) {
+  #renderExercise(/** @type {Exercise} */ exercise) {
     const main = this.querySelector("main");
     if (!main) throw new Error(`main is missing!`);
 
@@ -100,7 +97,7 @@ class MathExercises extends HTMLElement {
     main.replaceChildren(template.content.cloneNode(true));
   }
 
-  #renderHeader() {
+  #renderHeader(/** @type {Exercise} */ exercise) {
     const nav = this.querySelector("header > nav");
     if (!nav) throw new Error(`header > nav is missing!`);
 
@@ -111,6 +108,7 @@ class MathExercises extends HTMLElement {
       let link = document.createElement("a");
       link.innerText = ex;
       link.href = url.href;
+      if (ex === exercise) link.setAttribute("aria-current", "page");
       return link;
     });
 
