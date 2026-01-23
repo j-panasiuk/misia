@@ -53,9 +53,26 @@ if (!progression.length) throw new Error(`no exercises found: ${progression}`);
 // -- SETUP  --
 
 class MathExercises extends HTMLElement {
+  constructor() {
+    super();
+    this.handleKeyUp = this.#handleKeyUp.bind(this);
+  }
+
   connectedCallback() {
     console.log("connected", this);
     this.#render();
+    window.addEventListener("keypress", this.handleKeyUp);
+  }
+
+  disconnectedCallback() {
+    window.removeEventListener("keypress", this.handleKeyUp);
+  }
+
+  #handleKeyUp(/** @type {KeyboardEvent} */ evt) {
+    console.log("keyup", evt.key);
+    if (evt.key === " ") {
+      this.#render();
+    }
   }
 
   #render() {
@@ -63,9 +80,9 @@ class MathExercises extends HTMLElement {
     const exercise = searchParams.get(EXERCISE);
 
     if (!exercise) {
-      console.log("setting default exercise");
-      const url = new URL(location.href);
       const firstExercise = /** @type {Exercise} */ (progression[0]);
+      console.log("setting default exercise", firstExercise);
+      let url = new URL(location.href);
       url.searchParams.set(EXERCISE, firstExercise);
       return location.replace(url);
     }
@@ -85,22 +102,22 @@ class MathExercises extends HTMLElement {
   }
 
   #renderExercise(/** @type {Exercise} */ exercise) {
-    const main = this.querySelector("main");
-    if (!main) throw new Error(`main is missing!`);
-
     const template = templates.get(exercise);
     if (!(template instanceof HTMLTemplateElement))
       throw new Error(
         `unexpected template ${template} for exercise ${exercise} (expected HTMLTemplateElement)`,
       );
 
-    main.replaceChildren(template.content.cloneNode(true));
+    const node = /** @type {Element} */ (template.content.cloneNode(true));
+
+    for (const mn of node.querySelectorAll("mn")) {
+      mn.textContent = String(Math.ceil(12 * Math.random()));
+    }
+
+    this.$("main").replaceChildren(node);
   }
 
-  #renderHeader(/** @type {Exercise} */ exercise) {
-    const nav = this.querySelector("header > nav");
-    if (!nav) throw new Error(`header > nav is missing!`);
-
+  #renderHeader(/** @type {Exercise} */ currentExercise) {
     const links = progression.map((ex) => {
       let url = new URL(location.href);
       url.searchParams.set(EXERCISE, ex);
@@ -108,19 +125,16 @@ class MathExercises extends HTMLElement {
       let link = document.createElement("a");
       link.innerText = ex;
       link.href = url.href;
-      if (ex === exercise) link.setAttribute("aria-current", "page");
+      if (ex === currentExercise) link.setAttribute("aria-current", "page");
       return link;
     });
 
-    nav.replaceChildren(...links);
+    this.$("header > nav").replaceChildren(...links);
   }
 
-  #renderFooter(/** @type {Exercise} */ exercise) {
-    const nav = this.querySelector("footer > nav");
-    if (!nav) throw new Error(`footer > nav is missing!`);
-
+  #renderFooter(/** @type {Exercise} */ currentExercise) {
     const actions = [-1, 1].map((step) => {
-      const targetIndex = progression.indexOf(exercise) + step;
+      const targetIndex = progression.indexOf(currentExercise) + step;
       const targetExercise = progression[targetIndex];
       if (!targetExercise) return;
 
@@ -133,9 +147,22 @@ class MathExercises extends HTMLElement {
       return link;
     });
 
-    nav.replaceChildren(
+    this.$("footer > nav").replaceChildren(
       ...actions.filter((el) => el instanceof HTMLAnchorElement),
     );
+  }
+
+  // -- HELPERS --
+
+  /**
+   * @param {"main" | "header > nav" | "footer > nav"} selector
+   * @returns element matching selector
+   * @throws when element not found
+   */
+  $(selector) {
+    const el = this.querySelector(selector);
+    if (!el) throw new Error(`"${selector}" element is missing!`);
+    return el;
   }
 }
 
