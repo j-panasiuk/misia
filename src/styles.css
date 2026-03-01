@@ -14,10 +14,12 @@
     "Helvetica Neue",
     sans-serif;
 }
+
 * {
   box-sizing: border-box;
   margin: 0;
 }
+
 body {
   padding: 0;
   height: 100%;
@@ -25,6 +27,7 @@ body {
   display: flex;
   flex-direction: column;
 }
+
 math-test {
   height: 100vh;
   display: flex;
@@ -39,7 +42,7 @@ math-test {
     justify-content: center;
     flex: 0;
     padding: 1rem;
-    background-color: azure;
+    background: darkslategray;
   }
   main {
     width: 100%;
@@ -54,7 +57,7 @@ math-test {
     justify-content: center;
     flex: 0;
     padding: 1rem;
-    background-color: azure;
+    background: darkslategray;
   }
 }
 
@@ -68,23 +71,24 @@ mo {
 nav {
   display: flex;
   gap: 0.5rem;
-}
-nav > a {
-  text-decoration: none;
-  background: white;
-  color: deepskyblue;
-  font-size: 1.25rem;
-  font-weight: 500;
-  padding: 0.25rem 0.5rem;
-  border-radius: 0.25rem;
-}
-nav > a[aria-current="page"] {
-  background: deepskyblue;
-  color: white;
-}
-nav > a[aria-current="page"] ~ a {
-  color: gainsboro;
-}
-nav > a:hover {
-  opacity: 0.8;
+
+  a {
+    text-decoration: none;
+    background: lightslategrey;
+    color: gainsboro;
+    font-size: 1.25rem;
+    font-weight: 500;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+  }
+  a[aria-current="page"] {
+    background: deepskyblue;
+    color: white;
+  }
+  a[aria-current="page"] ~ a {
+    color: gainsboro;
+  }
+  a:hover {
+    opacity: 0.8;
+  }
 }
