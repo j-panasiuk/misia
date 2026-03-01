@@ -1,6 +1,6 @@
 // @ts-check
 
-import { toMathML } from "./math-renderer";
+import { toMathML } from "./math-expr-renderer";
 
 /**
  * Renders a complete exercise to HTML.
