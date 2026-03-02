@@ -1,6 +1,16 @@
 // @ts-check
 
-import { frac, num, sub } from "../math-expr-utils";
+import {
+  add,
+  div,
+  frac,
+  mixed,
+  mul,
+  neg,
+  num,
+  pow,
+  sub,
+} from "../math-expr-utils";
 
 /** @typedef {import("../exercise").Exercise} Exercise */
 
@@ -25,23 +35,49 @@ export function isExerciseId(val) {
 
 /**
  * @todo localization
- * @type {Record<ExId, Exercise>}
+ * @type {Record<ExId, () => Exercise>}
  */
 export const exercises = {
-  "1a": {
-    instruction: ["Oblicz"],
-    primaryExpr: sub(num(4), frac(num(3), num(5))),
-    answer: 4,
+  "1a": () => {
+    return {
+      instruction: ["Oblicz"],
+      primaryExpr: sub(num(4), frac(num(3), num(5))),
+      answer: frac(num(17), num(5)),
+    };
   },
-  "1b": {
-    instruction: ["Oblicz"],
-    primaryExpr: sub(num(4), frac(num(3), num(5))),
-    answer: 4,
+  "1b": () => {
+    return {
+      instruction: ["Oblicz"],
+      primaryExpr: add(mixed(-4, 4, 5), mixed(1, 2, 3)),
+      answer: 4,
+    };
   },
-  "2a": {
-    instruction: ["Oblicz"],
-    primaryExpr: sub(num(4), frac(num(3), num(5))),
-    answer: 4,
+  "1c": () => {
+    return {
+      instruction: ["Oblicz"],
+      primaryExpr: mul(mixed(2, 3, 4), sub(num(0.7), frac(num(1), num(2)))),
+      answer: 4,
+    };
+  },
+  "1d": () => {
+    return {
+      instruction: ["Oblicz"],
+      primaryExpr: frac(
+        sub(
+          mul(pow(neg(frac(num(1), num(4))), num(2)), num(6)),
+          div(num(0.05), frac(num(1), num(20))),
+        ),
+        num(-3),
+      ),
+      answer: 4,
+    };
+  },
+  "2a": () => {
+    return {
+      instruction: ["Oblicz"],
+      primaryExpr: sub(num(4), frac(num(3), num(5))),
+      answer: 4,
+    };
   },
 };
 

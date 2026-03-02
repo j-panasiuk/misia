@@ -64,11 +64,11 @@ class MathTest extends HTMLElement {
   #renderExercise(/** @type {ExId} */ exId) {
     const exercise = exercises[exId];
 
-    if (!exercise) {
+    if (typeof exercise !== "function") {
       throw new Error(`unknown exercise: ${exId}`);
     }
 
-    this.$("main").innerHTML = renderExercise(exercise);
+    this.$("main").innerHTML = renderExercise(exercise());
   }
 
   #renderHeader(/** @type {ExId} */ currentExId) {
