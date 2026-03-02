@@ -5,7 +5,7 @@
  * @param {number} a
  * @returns {import("./math-expr").NumNode}
  */
-export function num(a) {
+export function n(a) {
   return {
     type: "num",
     value: a,
@@ -19,7 +19,7 @@ export function num(a) {
  * @param {number} c
  * @returns {import("./math-expr").MixedNode}
  */
-export function mixed(a, b, c) {
+export function m(a, b, c) {
   return {
     type: "mixed",
     whole: a,
@@ -51,6 +51,18 @@ export function frac(a, b) {
     type: "frac",
     num: a,
     den: b,
+  };
+}
+
+/**
+ *
+ * @param {string} a
+ * @returns {import("./math-expr").VarNode}
+ */
+export function v(a) {
+  return {
+    type: "var",
+    name: a,
   };
 }
 

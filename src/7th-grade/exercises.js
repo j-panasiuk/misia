@@ -1,16 +1,6 @@
 // @ts-check
 
-import {
-  add,
-  div,
-  frac,
-  mixed,
-  mul,
-  neg,
-  num,
-  pow,
-  sub,
-} from "../math-expr-utils";
+import { add, div, frac, m, mul, neg, n, pow, sub } from "../math-expr-utils";
 
 /** @typedef {import("../exercise").Exercise} Exercise */
 
@@ -41,21 +31,21 @@ export const exercises = {
   "1a": () => {
     return {
       instruction: ["Oblicz"],
-      primaryExpr: sub(num(4), frac(num(3), num(5))),
-      answer: frac(num(17), num(5)),
+      primaryExpr: sub(n(4), frac(n(3), n(5))),
+      answer: frac(n(17), n(5)),
     };
   },
   "1b": () => {
     return {
       instruction: ["Oblicz"],
-      primaryExpr: add(mixed(-4, 4, 5), mixed(1, 2, 3)),
+      primaryExpr: add(m(-4, 4, 5), m(1, 2, 3)),
       answer: 4,
     };
   },
   "1c": () => {
     return {
       instruction: ["Oblicz"],
-      primaryExpr: mul(mixed(2, 3, 4), sub(num(0.7), frac(num(1), num(2)))),
+      primaryExpr: mul(m(2, 3, 4), sub(n(0.7), frac(n(1), n(2)))),
       answer: 4,
     };
   },
@@ -64,10 +54,10 @@ export const exercises = {
       instruction: ["Oblicz"],
       primaryExpr: frac(
         sub(
-          mul(pow(neg(frac(num(1), num(4))), num(2)), num(6)),
-          div(num(0.05), frac(num(1), num(20))),
+          mul(pow(neg(frac(n(1), n(4))), n(2)), n(6)),
+          div(n(0.05), frac(n(1), n(20))),
         ),
-        num(-3),
+        n(-3),
       ),
       answer: 4,
     };
@@ -75,7 +65,7 @@ export const exercises = {
   "2a": () => {
     return {
       instruction: ["Oblicz"],
-      primaryExpr: sub(num(4), frac(num(3), num(5))),
+      primaryExpr: sub(n(4), frac(n(3), n(5))),
       answer: 4,
     };
   },
