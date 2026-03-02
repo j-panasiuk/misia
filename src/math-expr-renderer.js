@@ -20,7 +20,10 @@
 export function toMathML(node) {
   switch (node.type) {
     case "num":
-      return `<mn>${node.value}</mn>`;
+      return node.value < 0
+        ? // Ensure consistent minus sign display
+          `<mrow><mo>−</mo><mn>${Math.abs(node.value)}</mn></mrow>`
+        : `<mn>${node.value}</mn>`;
 
     case "var":
       return `<mi>${node.name}</mi>`;
@@ -28,7 +31,15 @@ export function toMathML(node) {
     case "mixed": {
       const whole = `<mn>${node.whole}</mn>`;
       const frac = `<mfrac><mn>${node.num}</mn><mn>${node.den}</mn></mfrac>`;
-      return `<mrow>${whole}<mspace width="0.3em"/>${frac}</mrow>`;
+      return `<mrow>${whole}<mspace width="0.125em"/>${frac}</mrow>`;
+    }
+
+    case "negate": {
+      const operand = toMathML(node.operand);
+      const operandWrapped = needsParens(node.operand, "negate", "operand")
+        ? `<mrow><mo>(</mo>${operand}<mo>)</mo></mrow>`
+        : operand;
+      return `<mrow><mo>−</mo>${operandWrapped}</mrow>`;
     }
 
     case "frac":
@@ -60,7 +71,7 @@ export function toMathML(node) {
       const rightWrapped = needsParens(node.right, "mul", "right")
         ? `<mrow><mo>(</mo>${right}<mo>)</mo></mrow>`
         : right;
-      return `<mrow>${leftWrapped}<mo>×</mo>${rightWrapped}</mrow>`;
+      return `<mrow>${leftWrapped}<mo>⋅</mo>${rightWrapped}</mrow>`;
     }
 
     case "div": {
@@ -73,7 +84,7 @@ export function toMathML(node) {
       const rightWrapped = needsParens(node.right, "div", "right")
         ? `<mrow><mo>(</mo>${right}<mo>)</mo></mrow>`
         : right;
-      return `<mrow>${leftWrapped}<mo>÷</mo>${rightWrapped}</mrow>`;
+      return `<mrow>${leftWrapped}<mo>∶</mo>${rightWrapped}</mrow>`;
     }
 
     case "pow": {
@@ -111,12 +122,13 @@ export function toMathML(node) {
  * Precedence (highest to lowest):
  * 1. Atoms (num, var, frac, root)
  * 2. Power (pow)
- * 3. Multiplication & Division (mul, div)
- * 4. Addition & Subtraction (add, sub)
+ * 3. Negation (negate)
+ * 4. Multiplication & Division (mul, div)
+ * 5. Addition & Subtraction (add, sub)
  *
  * @param {import("./math-expr").MathExpr} operand - The operand to check
- * @param {"add"|"sub"|"mul"|"div"|"pow"} parentOp - The parent operator
- * @param {"left"|"right"} position - Position of operand (left or right of parent)
+ * @param {"add"|"sub"|"mul"|"div"|"pow"|"negate"} parentOp - The parent operator
+ * @param {"left"|"right"|"operand"} position - Position of operand
  * @returns {boolean} True if parentheses are needed
  *
  * @example
@@ -130,7 +142,8 @@ function needsParens(operand, parentOp, position) {
     sub: 1,
     mul: 2,
     div: 2,
-    pow: 3,
+    negate: 3,
+    pow: 4,
   };
 
   // Atoms never need parens

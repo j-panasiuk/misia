@@ -1,7 +1,7 @@
 // @ts-check
 
 /**
- * @typedef {NumNode|MixedNode|FracNode|VarNode|BinaryOpNode|RootNode} MathExpr
+ * @typedef {NumNode|MixedNode|NegateNode|FracNode|VarNode|BinaryOpNode|RootNode} MathExpr
  *
  * A mathematical expression AST node. Can be recursively composed.
  */
@@ -27,6 +27,16 @@
  * @example
  * { type: "mixed", whole: 2, num: 3, den: 4 }  // 2 3/4
  * { type: "mixed", whole: 0, num: 1, den: 2 }  // 0 1/2 (equivalent to 1/2)
+ */
+
+/**
+ * @typedef {Object} NegateNode
+ * @property {"negate"} type
+ * @property {MathExpr} operand - Expression to negate
+ *
+ * @example
+ * { type: "negate", operand: { type: "num", value: 5 } }  // -5
+ * { type: "negate", operand: { type: "var", name: "x" } } // -x
  */
 
 /**
