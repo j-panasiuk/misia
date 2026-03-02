@@ -20,16 +20,13 @@
 export function toMathML(node) {
   switch (node.type) {
     case "num":
-      return node.value < 0
-        ? // Ensure consistent minus sign display
-          `<mrow><mo>−</mo><mn>${Math.abs(node.value)}</mn></mrow>`
-        : `<mn>${node.value}</mn>`;
+      return toMathMLNumber(node.value);
 
     case "var":
       return `<mi>${node.name}</mi>`;
 
     case "mixed": {
-      const whole = `<mn>${node.whole}</mn>`;
+      const whole = toMathMLNumber(node.whole);
       const frac = `<mfrac><mn>${node.num}</mn><mn>${node.den}</mn></mfrac>`;
       return `<mrow>${whole}<mspace width="0.125em"/>${frac}</mrow>`;
     }
@@ -114,6 +111,23 @@ export function toMathML(node) {
       // @ts-expect-error
       throw new Error(`Unknown expression type: ${node.type}`);
   }
+}
+
+/**
+ * Wraps a numeric value in MathML tags with proper handling for negative numbers.
+ *
+ * @param {number} value - The numeric value to wrap
+ * @returns {string} MathML markup for the number
+ *
+ * @example
+ * toMathMLNumber(5)    // "<mn>5</mn>"
+ * toMathMLNumber(-1.5) // "<mrow><mo>−</mo><mn>1.5</mn></mrow>"
+ */
+function toMathMLNumber(value) {
+  return value < 0
+    ? // Ensure consistent minus sign display
+      `<mrow><mo>−</mo><mn>${Math.abs(value)}</mn></mrow>`
+    : `<mn>${value}</mn>`;
 }
 
 /**
