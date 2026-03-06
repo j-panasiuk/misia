@@ -1,9 +1,21 @@
 // @ts-check
 
 /**
- *
+ * Create a variable value.
+ * @param {string} a
+ * @returns {VarNode}
+ */
+export function v(a) {
+  return {
+    type: "var",
+    name: a,
+  };
+}
+
+/**
+ * Create numeric value.
  * @param {number} a
- * @returns {import("./math-expr").NumNode}
+ * @returns {NumNode}
  */
 export function n(a) {
   return {
@@ -13,11 +25,11 @@ export function n(a) {
 }
 
 /**
- *
+ * Create mixed number value.
  * @param {number} a
  * @param {number} b
  * @param {number} c
- * @returns {import("./math-expr").MixedNode}
+ * @returns {MixedNode}
  */
 export function m(a, b, c) {
   return {
@@ -29,22 +41,10 @@ export function m(a, b, c) {
 }
 
 /**
- *
- * @param {import("./math-expr").MathExpr} a
- * @returns {import("./math-expr").NegateNode}
- */
-export function neg(a) {
-  return {
-    type: "negate",
-    operand: a,
-  };
-}
-
-/**
- *
- * @param {import("./math-expr").MathExpr} a
- * @param {import("./math-expr").MathExpr} b
- * @returns {import("./math-expr").FracNode}
+ * Create a fraction value.
+ * @param {MathExpr} a
+ * @param {MathExpr} b
+ * @returns {FracNode}
  */
 export function frac(a, b) {
   return {
@@ -55,22 +55,22 @@ export function frac(a, b) {
 }
 
 /**
- *
- * @param {string} a
- * @returns {import("./math-expr").VarNode}
+ * Negate an expression.
+ * @param {MathExpr} a
+ * @returns {NegateNode}
  */
-export function v(a) {
+export function neg(a) {
   return {
-    type: "var",
-    name: a,
+    type: "negate",
+    operand: a,
   };
 }
 
 /**
- *
- * @param {import("./math-expr").MathExpr} a
- * @param {import("./math-expr").MathExpr} b
- * @returns {import("./math-expr").BinaryOpNode}
+ * Create addition of two expressions.
+ * @param {MathExpr} a
+ * @param {MathExpr} b
+ * @returns {BinaryOpNode<'add'>}
  */
 export function add(a, b) {
   return {
@@ -81,10 +81,10 @@ export function add(a, b) {
 }
 
 /**
- *
- * @param {import("./math-expr").MathExpr} a
- * @param {import("./math-expr").MathExpr} b
- * @returns {import("./math-expr").BinaryOpNode}
+ * Create subtraction of two expressions.
+ * @param {MathExpr} a
+ * @param {MathExpr} b
+ * @returns {BinaryOpNode<'sub'>}
  */
 export function sub(a, b) {
   return {
@@ -95,10 +95,10 @@ export function sub(a, b) {
 }
 
 /**
- *
- * @param {import("./math-expr").MathExpr} a
- * @param {import("./math-expr").MathExpr} b
- * @returns {import("./math-expr").BinaryOpNode}
+ * Create multiplication of two expressions.
+ * @param {MathExpr} a
+ * @param {MathExpr} b
+ * @returns {BinaryOpNode<'mul'>}
  */
 export function mul(a, b) {
   return {
@@ -109,10 +109,10 @@ export function mul(a, b) {
 }
 
 /**
- *
- * @param {import("./math-expr").MathExpr} a
- * @param {import("./math-expr").MathExpr} b
- * @returns {import("./math-expr").BinaryOpNode}
+ * Create division of two expressions.
+ * @param {MathExpr} a
+ * @param {MathExpr} b
+ * @returns {BinaryOpNode<'div'>}
  */
 export function div(a, b) {
   return {
@@ -123,14 +123,28 @@ export function div(a, b) {
 }
 
 /**
- *
- * @param {import("./math-expr").MathExpr} a
- * @param {import("./math-expr").MathExpr} b
- * @returns {import("./math-expr").BinaryOpNode}
+ * Create a power expression.
+ * @param {MathExpr} a
+ * @param {MathExpr} b
+ * @returns {BinaryOpNode<'pow'>}
  */
 export function pow(a, b) {
   return {
     type: "pow",
+    left: a,
+    right: b,
+  };
+}
+
+/**
+ * Create equality expression.
+ * @param {MathExpr} a
+ * @param {MathExpr} b
+ * @returns {EqNode}
+ */
+export function eq(a, b) {
+  return {
+    type: "eq",
     left: a,
     right: b,
   };

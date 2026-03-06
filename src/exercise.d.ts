@@ -1,13 +1,5 @@
-// @ts-check
-
-/** @typedef {import("./math-expr").MathExpr} Node */
-
 /**
- * @typedef {Object} Exercise
- * @property {ContentSegment[]} instruction - Array of text and math segments forming the exercise instruction
- * @property {Node|null} [primaryExpr=null] - Optional: the main expression being worked with (for reference/display)
- * @property {number|string|Node} answer - The expected answer (numeric, symbolic, or expression)
- * @property {Object} [metadata] - Optional metadata (difficulty, topic, etc.)
+ * Represents a math exercise with instructions and an expected answer.
  *
  * @example
  * // Simple: "Calculate 2 + 3"
@@ -32,17 +24,27 @@
  *   answer: { type: "add", left: { type: "var", name: "x" }, right: { type: "num", value: 4 } }
  * }
  */
+interface Exercise {
+  instruction: ContentSegment[];
+  primaryExpr?: MathExpr | null; // Optional main expression (for reference)
+  answer: number | string | MathExpr; // Can be numeric, string, or expression
+  metadata?: Record<string, any>; // Optional metadata (difficulty, topic, etc.)
+}
 
 /**
- * @typedef {string|MathSegment} ContentSegment
+ * A content segment — either plain text or a math segment.
  */
+type ContentSegment = string | MathSegment;
 
 /**
- * @typedef {Object} MathSegment
- * @property {"math"} type
- * @property {Node} expr - Mathematical expression to render inline
- * @property {boolean} [display=false] - If true, render as display math (block); else inline
- *
+ * A math segment with an expression and rendering mode.
  * @example
  * { type: "math", expr: { type: "num", value: 5 }, display: false }
  */
+interface MathSegment {
+  type: "math";
+  expr: MathExpr;
+  display?: boolean; // If true, render as display math (block); otherwise inline
+}
+
+type Solved = "correct" | "incorrect";
