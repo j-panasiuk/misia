@@ -2,7 +2,7 @@
 
 import { add, div, frac, m, mul, neg, n, pow, sub } from "../math-expr-utils";
 
-/** @typedef {import("../exercise").Exercise} Exercise */
+// /** @typedef {import("../exercise").Exercise} Exercise */
 
 // -- EXERCISE IDS --
 
@@ -71,7 +71,8 @@ export const exercises = {
   },
 };
 
-// @todo allow to filter by tags ("arithmetic", "algebra" etc)
+// @todo allow to select a subset of exercises (only "1a", "2a", "3a", etc)
+// @todo allow to filter exercises by tags ("arithmetic", "algebra" etc)
 export const progression = /** @type {[ExId, ...ExId[]]} */ (
   Object.keys(exercises).sort()
 );

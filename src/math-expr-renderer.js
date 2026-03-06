@@ -3,7 +3,7 @@
 /**
  * Converts a mathematical expression AST to MathML markup.
  *
- * @param {import("./math-expr").MathExpr} node - The expression node to convert
+ * @param {MathExpr} node - The expression node to convert
  * @returns {string} MathML markup (inner content, without outer <math> tags)
  *
  * @example
@@ -19,11 +19,11 @@
  */
 export function toMathML(node) {
   switch (node.type) {
-    case "num":
-      return toMathMLNumber(node.value);
-
     case "var":
       return `<mi>${node.name}</mi>`;
+
+    case "num":
+      return toMathMLNumber(node.value);
 
     case "mixed": {
       const whole = toMathMLNumber(node.whole);
@@ -107,6 +107,10 @@ export function toMathML(node) {
       }
     }
 
+    case "eq": {
+      return `<mrow>${toMathML(node.left)}<mo>=</mo>${toMathML(node.right)}<mrow>`;
+    }
+
     default:
       // @ts-expect-error
       throw new Error(`Unknown expression type: ${node.type}`);
@@ -115,6 +119,7 @@ export function toMathML(node) {
 
 /**
  * Wraps a numeric value in MathML tags with proper handling for negative numbers.
+ * Accepts `NaN` and treats it as an editable placeholder.
  *
  * @param {number} value - The numeric value to wrap
  * @returns {string} MathML markup for the number
@@ -122,8 +127,12 @@ export function toMathML(node) {
  * @example
  * toMathMLNumber(5)    // "<mn>5</mn>"
  * toMathMLNumber(-1.5) // "<mrow><mo>−</mo><mn>1.5</mn></mrow>"
+ * toMathMLNumber(NaN) // "<mn><span contenteditable></mn>"
  */
 function toMathMLNumber(value) {
+  if (Number.isNaN(value))
+    return `<mn><span contenteditable autofocus></span></mn>`;
+
   return value < 0
     ? // Ensure consistent minus sign display
       `<mrow><mo>−</mo><mn>${Math.abs(value)}</mn></mrow>`
@@ -140,7 +149,7 @@ function toMathMLNumber(value) {
  * 4. Multiplication & Division (mul, div)
  * 5. Addition & Subtraction (add, sub)
  *
- * @param {import("./math-expr").MathExpr} operand - The operand to check
+ * @param {MathExpr} operand - The operand to check
  * @param {"add"|"sub"|"mul"|"div"|"pow"|"negate"} parentOp - The parent operator
  * @param {"left"|"right"|"operand"} position - Position of operand
  * @returns {boolean} True if parentheses are needed

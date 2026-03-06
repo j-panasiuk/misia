@@ -4,31 +4,57 @@ import { toMathML } from "./math-expr-renderer";
 
 /**
  * Renders a complete exercise to HTML.
- *
- * @param {import("./exercise").Exercise} exercise
+ * @param {Exercise} exercise
+ * @param {Solved|undefined} [solved]
  * @returns {string} HTML markup
  */
-export function renderExercise(exercise) {
+export function renderExercise(exercise, solved) {
   const instructionHTML = renderInstruction(exercise.instruction);
 
-  let html = `<div class="exercise">
-    <div class="instruction">${instructionHTML}</div>`;
+  let html = `<exercise>
+    <instruction>${instructionHTML}</instruction>`;
 
   if (exercise.primaryExpr) {
     const mathML = toMathML(exercise.primaryExpr);
-    html += `<div class="primary-expr"><math display="block"><mrow>${mathML}</mrow></math></div>`;
+    html += `<expression><math display="block"><mrow>${mathML}</mrow></math></expression>`;
   }
 
-  html += `</div>`;
+  if (solved) {
+    const answer =
+      typeof exercise.answer === "object"
+        ? `<math display="block"><mrow>${toMathML(exercise.answer)}</mrow>`
+        : exercise.answer;
+    html += `<answer style="font-size: 2rem">${answer}</answer>`;
+  }
+
+  html += `</exercise>`;
   return html;
 }
 
 /**
- * Renders an exercise instruction (mixed text and math) to HTML.
- *
- * @param {import("./exercise").ContentSegment[]} instruction - Array of content segments
+ * Renders mathematical expression to HTML.
+ * @param {MathExpr} expr
  * @returns {string} HTML markup
- *
+ */
+export function renderExpression(expr) {
+  return `<math display="block"><mrow>${toMathML(expr)}</mrow></math>`;
+}
+
+/**
+ * Renders exercise answer to HTML.
+ * @param {Exercise['answer']} answer
+ * @returns {string} HTML markup
+ */
+export function renderAnswer(answer) {
+  return typeof answer === "object"
+    ? `<math display="block"><mrow>${toMathML(answer)}</mrow>`
+    : String(answer);
+}
+
+/**
+ * Renders an exercise instruction (mixed text and math) to HTML.
+ * @param {ContentSegment[]} instruction - Array of content segments
+ * @returns {string} HTML markup
  * @example
  * renderInstruction([
  *   { type: "text", content: "Calculate " },
