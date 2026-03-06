@@ -5,7 +5,7 @@ import { renderExercise } from "./exercise-renderer";
 
 /** @typedef {import("./7th-grade/exercises").ExId} ExId */
 
-class MathTest extends HTMLElement {
+class ExamComponent extends HTMLElement {
   static searchParams = {
     exId: "exercise",
   };
@@ -37,15 +37,17 @@ class MathTest extends HTMLElement {
     }
   }
 
+  // -- RENDERING --
+
   #render() {
     const searchParams = new URLSearchParams(location.search);
-    const exId = searchParams.get(MathTest.searchParams.exId);
+    const exId = searchParams.get(ExamComponent.searchParams.exId);
 
     if (!exId) {
       // Setting default exercise
       const firstExId = progression[0];
       let url = new URL(location.href);
-      url.searchParams.set(MathTest.searchParams.exId, firstExId);
+      url.searchParams.set(ExamComponent.searchParams.exId, firstExId);
       return location.replace(url);
     }
 
@@ -74,7 +76,7 @@ class MathTest extends HTMLElement {
   #renderHeader(/** @type {ExId} */ currentExId) {
     const links = progression.map((exId) => {
       let url = new URL(location.href);
-      url.searchParams.set(MathTest.searchParams.exId, exId);
+      url.searchParams.set(ExamComponent.searchParams.exId, exId);
 
       let link = document.createElement("a");
       link.innerText = exId;
@@ -93,7 +95,7 @@ class MathTest extends HTMLElement {
       if (!targetExId) return;
 
       let url = new URL(location.href);
-      url.searchParams.set(MathTest.searchParams.exId, targetExId);
+      url.searchParams.set(ExamComponent.searchParams.exId, targetExId);
 
       let link = document.createElement("a");
       link.innerText = step < 0 ? "←" : "→";
@@ -120,4 +122,5 @@ class MathTest extends HTMLElement {
   }
 }
 
-customElements.define("math-test", MathTest);
+if (!customElements.get("exam-component"))
+  customElements.define("exam-component", ExamComponent);

@@ -1,0 +1,53 @@
+<!doctype html>
+<title>Matma</title>
+<link rel="icon" type="image/svg+xml" href="./assets/favicon.svg" />
+<link rel="stylesheet" href="./styles.css" />
+<script type="module" src="./puzzle-component.js"></script>
+<style>
+  main {
+    flex: 1;
+    display: grid;
+    place-items: center;
+  }
+  puzzle-component {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+  expression {
+    width: 100%;
+    min-height: 20vb;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  answer {
+    width: 100%;
+    min-height: 20vb;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--note-green-light);
+  }
+</style>
+
+<header>
+  <nav>
+    <a href="/">Home</a>
+    <span>/</span>
+    <h2>Puzzle</h2>
+  </nav>
+  <div>
+    <a>GitHub</a>
+  </div>
+</header>
+<main>
+  <puzzle-component></puzzle-component>
+</main>
+<footer>
+  <nav>
+    <button>Next ></button>
+  </nav>
+</footer>

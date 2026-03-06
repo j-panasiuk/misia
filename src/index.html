@@ -3,395 +3,56 @@
   <title>Matma</title>
   <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg" />
   <link rel="stylesheet" href="./styles.css" />
-  <script src="./app.js" type="module"></script>
 </head>
 
-<math-exercises id="exercises">
-  <header>
-    <nav />
-  </header>
-  <main>
-    <noscript>🤷‍♀️</noscript>
-  </main>
-  <footer>
-    <nav />
-  </footer>
-</math-exercises>
+<header>Matma</header>
+<main>
+  <section>
+    <style>
+      @scope {
+        & {
+          padding: 3rem;
+          background: var(--note-orange-bg);
+          margin-block: 1rem;
+        }
+      }
+    </style>
+    <h2>Welcome!</h2>
+    <script>
+      // @ts-check
+      document.currentScript?.replaceWith(
+        sessionStorage.getItem("onboarded")
+          ? document.createElement("activity-timeline")
+          : document.createElement("welcome-card"),
+      );
+    </script>
+  </section>
 
-<template exercise="1a">
-  <math>
-    <mrow>
-      <mn>4</mn>
-      <mo>−</mo>
-      <mfrac>
-        <mn>3</mn>
-        <mn>5</mn>
-      </mfrac>
-    </mrow>
-  </math>
-</template>
+  <section>
+    <style>
+      @scope {
+        & {
+          display: grid;
+          gap: 1rem;
+          grid-template-columns: repeat(
+            auto-fit,
+            minmax(min(100%, 400px), 1fr)
+          );
+        }
 
-<template exercise="1b">
-  <math>
-    <mrow>
-      <mo>−</mo>
-      <mn>4</mn>
-      <mfrac>
-        <mn>4</mn>
-        <mn>5</mn>
-      </mfrac>
-      <mo>+</mo>
-      <mn>1</mn>
-      <mfrac>
-        <mn>2</mn>
-        <mn>3</mn>
-      </mfrac>
-    </mrow>
-  </math>
-</template>
-
-<template exercise="1c">
-  <math>
-    <mrow>
-      <mn>2</mn>
-      <mfrac>
-        <mn>3</mn>
-        <mn>4</mn>
-      </mfrac>
-      <mo>·</mo>
-      <mrow>
-        <mo>(</mo>
-        <mn>0,7</mn>
-        <mo>−</mo>
-        <mfrac>
-          <mn>1</mn>
-          <mn>2</mn>
-        </mfrac>
-        <mo>)</mo>
-      </mrow>
-    </mrow>
-  </math>
-</template>
-
-<template exercise="1d">
-  <math>
-    <mfrac>
-      <mrow>
-        <msup>
-          <mrow>
-            <mo>(</mo>
-            <mfrac>
-              <mn>1</mn>
-              <mn>4</mn>
-            </mfrac>
-            <mo>)</mo>
-          </mrow>
-          <mn>2</mn>
-        </msup>
-        <mo>·</mo>
-        <mn>6</mn>
-        <mo>−</mo>
-        <mn>0,05</mn>
-        <mo>·</mo>
-        <mfrac>
-          <mn>1</mn>
-          <mn>20</mn>
-        </mfrac>
-      </mrow>
-      <mrow>
-        <mo>−</mo>
-        <mn>3</mn>
-      </mrow>
-    </mfrac>
-  </math>
-</template>
-
-<template exercise="2a">
-  <math>
-    <mrow>
-      <mn>7</mn>
-      <mo>+</mo>
-      <mn>12</mn>
-      <mo>−</mo>
-      <mo>(</mo>
-      <mo>−</mo>
-      <mn>8</mn>
-      <mo>)</mo>
-      <mo>−</mo>
-      <mn>7</mn>
-    </mrow>
-  </math>
-</template>
-
-<template exercise="2b">
-  <math>
-    <mrow>
-      <mn>0,4</mn>
-      <mo>+</mo>
-      <mfrac>
-        <mn>3</mn>
-        <mn>7</mn>
-      </mfrac>
-      <mo>−</mo>
-      <mfrac>
-        <mn>2</mn>
-        <mn>5</mn>
-      </mfrac>
-      <mo>+</mo>
-      <mfrac>
-        <mn>3</mn>
-        <mn>7</mn>
-      </mfrac>
-      <mo>+</mo>
-      <mn>0,1</mn>
-    </mrow>
-  </math>
-</template>
-
-<template exercise="2c">
-  <math>
-    <mrow>
-      <mn>0,75</mn>
-      <mo>−</mo>
-      <mn>1</mn>
-      <mfrac>
-        <mn>1</mn>
-        <mn>4</mn>
-      </mfrac>
-      <mo>−</mo>
-      <mfrac>
-        <mn>1</mn>
-        <mn>2</mn>
-      </mfrac>
-      <mo>+</mo>
-      <mn>3,5</mn>
-    </mrow>
-  </math>
-</template>
-
-<template exercise="3a">
-  <math>
-    <mrow>
-      <mo>−</mo>
-      <mn>3,45</mn>
-      <mo>·</mo>
-      <mn>8</mn>
-    </mrow>
-  </math>
-</template>
-
-<template exercise="3b">
-  <math>
-    <msup>
-      <mrow>
-        <mo>(</mo>
-        <mo>−</mo>
-        <mn>1,4</mn>
-        <mo>)</mo>
-      </mrow>
-      <mn>3</mn>
-    </msup>
-  </math>
-</template>
-
-<template exercise="3c">
-  <math>
-    <mrow>
-      <mo>−</mo>
-      <mn>0,3</mn>
-      <mo>·</mo>
-      <msup>
-        <mrow>
-          <mo>(</mo>
-          <mfrac>
-            <mn>1</mn>
-            <mn>3</mn>
-          </mfrac>
-          <mo>)</mo>
-        </mrow>
-        <mn>2</mn>
-      </msup>
-    </mrow>
-  </math>
-</template>
-
-<template exercise="3d">
-  <math>
-    <mrow>
-      <mo>−</mo>
-      <mn>5,6</mn>
-      <mo>·</mo>
-      <mo>(</mo>
-      <mo>−</mo>
-      <mn>0,8</mn>
-      <mo>)</mo>
-    </mrow>
-  </math>
-</template>
-
-<template exercise="4a">
-  <math>
-    <msup>
-      <mrow>
-        <mo>(</mo>
-        <mfrac>
-          <mn>2</mn>
-          <mn>5</mn>
-        </mfrac>
-        <mo>)</mo>
-      </mrow>
-      <mn>2</mn>
-    </msup>
-    <mo>−</mo>
-    <msup>
-      <mrow>
-        <mo>(</mo>
-        <mo>−</mo>
-        <mfrac>
-          <mn>2</mn>
-          <mn>5</mn>
-        </mfrac>
-        <mo>)</mo>
-      </mrow>
-      <mn>3</mn>
-    </msup>
-  </math>
-</template>
-
-<template exercise="4b">
-  <math>
-    <msup>
-      <mrow>
-        <mo>(</mo>
-        <mfrac>
-          <mn>3</mn>
-          <mn>7</mn>
-        </mfrac>
-        <mo>)</mo>
-      </mrow>
-      <mn>2</mn>
-    </msup>
-    <mo>−</mo>
-    <mfrac>
-      <msup>
-        <mn>3</mn>
-        <mn>2</mn>
-      </msup>
-      <mn>7</mn>
-    </mfrac>
-    <mo>+</mo>
-    <mfrac>
-      <mn>3</mn>
-      <msup>
-        <mn>7</mn>
-        <mn>2</mn>
-      </msup>
-    </mfrac>
-  </math>
-</template>
-
-<template exercise="4c">
-  <math>
-    <mn>30</mn>
-    <mo>·</mo>
-    <msup>
-      <mrow>
-        <mo>(</mo>
-        <mo>−</mo> <mn>0,1</mn>
-        <mo>)</mo>
-      </mrow>
-      <mn>3</mn>
-    </msup>
-    <mo>−</mo>
-    <mn>0,1</mn>
-    <mo>·</mo>
-    <msup>
-      <mn>30</mn>
-      <mn>3</mn>
-    </msup>
-  </math>
-</template>
-
-<template exercise="4d">
-  <math>
-    <mrow>
-      <msup>
-        <mn>10</mn>
-        <mn>2</mn>
-      </msup>
-      <mo>·</mo>
-      <mfrac>
-        <mn>1</mn>
-        <mn>10</mn>
-      </mfrac>
-      <mo>−</mo>
-      <msup>
-        <mrow>
-          <mo>(</mo>
-          <mo>−</mo>
-          <mfrac>
-            <mn>1</mn>
-            <mn>10</mn>
-          </mfrac>
-          <mo>)</mo>
-        </mrow>
-        <mn>0</mn>
-      </msup>
-      <mo>·</mo>
-      <msup>
-        <mrow>
-          <mo>(</mo>
-          <mo>−</mo>
-          <mn>10</mn>
-          <mo>)</mo>
-        </mrow>
-        <mn>2</mn>
-      </msup>
-    </mrow>
-  </math>
-</template>
-
-<template exercise="5a">
-  <math>
-    <mn>16</mn>
-    <mo>·</mo>
-    <msup>
-      <mn>2</mn>
-      <mn>5</mn>
-    </msup>
-    <mo>·</mo>
-    <msup>
-      <mn>2</mn>
-      <mn>7</mn>
-    </msup>
-  </math>
-</template>
-
-<template exercise="5b">
-  <math>
-    <mn>81</mn>
-    <mo>·</mo>
-    <msup>
-      <mn>3</mn>
-      <mn>5</mn>
-    </msup>
-    <mo>:</mo>
-    <msup>
-      <mn>3</mn>
-      <mn>4</mn>
-    </msup>
-  </math>
-</template>
-
-<template exercise="5c">
-  <math>
-    <mn>64</mn>
-    <mo>·</mo>
-    <mn>16</mn>
-    <mo>:</mo>
-    <msup>
-      <mn>2</mn>
-      <mn>8</mn>
-    </msup>
-  </math>
-</template>
+        & > div {
+          padding: 3rem;
+          background: var(--color);
+        }
+      }
+    </style>
+    <div style="--color: var(--note-green-bg)">
+      <h2>Puzzle</h2>
+      <a href="/puzzle">Puzzle</a>
+    </div>
+    <div style="--color: var(--note-blue-bg)">
+      <h2>Exam</h2>
+      <a href="/exam">Exam</a>
+    </div>
+  </section>
+</main>
