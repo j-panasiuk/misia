@@ -1,74 +1,62 @@
 <!doctype html>
-
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width" />
 <title>Matma - Test 7</title>
 <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg" />
 <link rel="stylesheet" href="./styles.css" />
-<script type="module" src="./exam-component.js"></script>
+<script type="module" src="./exam-view.js"></script>
+<script type="module" src="./exam-exercise.js"></script>
 <style>
-  exam-component {
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  header {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex: 0;
-    padding: 1rem;
-    background: var(--color-text);
-  }
-
   main {
     width: 100%;
     display: grid;
     place-items: center;
     flex: 1;
   }
-
-  footer {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex: 0;
-    padding: 1rem;
-    background: var(--color-text);
+  math {
+    font-size: 2.5rem;
   }
-
-  nav {
+  exam-view {
+    display: contents;
+  }
+  exam-exercise {
     display: flex;
-    gap: 0.5rem;
+    flex-direction: column;
+    gap: 3rem;
+    animation: fade-in 150ms;
 
-    a {
-      text-decoration: none;
-      background: slategray;
-      color: gainsboro;
-      font-size: 1.25rem;
-      font-weight: 500;
-      padding: 0.25rem 0.5rem;
-      border-radius: 0.25rem;
+    solution {
+      display: flex;
+      flex-direction: column;
+      gap: 3rem;
     }
-    a[aria-current="page"] {
-      background: cadetblue;
-      color: white;
+    step {
+      display: flex;
+      flex-direction: column;
+      gap: 3rem;
+      p {
+        color: var(--note-gray-text);
+      }
+      math {
+        /* color: var(--note-gray-text); */
+      }
     }
-    a[aria-current="page"] ~ a {
-      color: gainsboro;
-    }
-    a:hover {
-      opacity: 0.8;
+    answer {
+      margin-top: 1rem;
     }
   }
 </style>
 
-<exam-component>
+<exam-view>
   <header>
-    <nav />
+    <nav>
+      <a href="/">Home</a>
+      <span>/</span>
+      <h2>Exam</h2>
+    </nav>
+    <div>
+      <a>GitHub</a>
+    </div>
   </header>
   <main>
     <noscript>🤷‍♀️</noscript>
@@ -76,4 +64,4 @@
   <footer>
     <nav />
   </footer>
-</exam-component>
+</exam-view>

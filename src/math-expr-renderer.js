@@ -34,7 +34,7 @@ export function toMathML(node) {
     case "negate": {
       const operand = toMathML(node.operand);
       const operandWrapped = needsParens(node.operand, "negate", "operand")
-        ? `<mrow><mo>(</mo>${operand}<mo>)</mo></mrow>`
+        ? `<mo>(</mo>${operand}<mo>)</mo>`
         : operand;
       return `<mrow><mo>−</mo>${operandWrapped}</mrow>`;
     }
@@ -45,7 +45,11 @@ export function toMathML(node) {
     case "add": {
       const left = toMathML(node.left);
       const right = toMathML(node.right);
-      return `<mrow>${left}<mo>+</mo>${right}</mrow>`;
+      // Wrap right side in mrow if it's a binary op with lower precedence
+      const rightWrapped = needsParens(node.right, "add", "right")
+        ? `<mo>(</mo>${right}<mo>)</mo>`
+        : right;
+      return `<mrow>${left}<mo>+</mo>${rightWrapped}</mrow>`;
     }
 
     case "sub": {
@@ -53,7 +57,7 @@ export function toMathML(node) {
       const right = toMathML(node.right);
       // Wrap right side in mrow if it's a binary op with lower precedence
       const rightWrapped = needsParens(node.right, "sub", "right")
-        ? `<mrow><mo>(</mo>${right}<mo>)</mo></mrow>`
+        ? `<mo>(</mo>${right}<mo>)</mo>`
         : right;
       return `<mrow>${left}<mo>−</mo>${rightWrapped}</mrow>`;
     }
@@ -63,10 +67,10 @@ export function toMathML(node) {
       const right = toMathML(node.right);
       // Wrap operands if they're lower-precedence operations
       const leftWrapped = needsParens(node.left, "mul", "left")
-        ? `<mrow><mo>(</mo>${left}<mo>)</mo></mrow>`
+        ? `<mo>(</mo>${left}<mo>)</mo>`
         : left;
       const rightWrapped = needsParens(node.right, "mul", "right")
-        ? `<mrow><mo>(</mo>${right}<mo>)</mo></mrow>`
+        ? `<mo>(</mo>${right}<mo>)</mo>`
         : right;
       return `<mrow>${leftWrapped}<mo>⋅</mo>${rightWrapped}</mrow>`;
     }
@@ -76,10 +80,10 @@ export function toMathML(node) {
       const right = toMathML(node.right);
       // Wrap operands if they're lower-precedence operations
       const leftWrapped = needsParens(node.left, "div", "left")
-        ? `<mrow><mo>(</mo>${left}<mo>)</mo></mrow>`
+        ? `<mo>(</mo>${left}<mo>)</mo>`
         : left;
       const rightWrapped = needsParens(node.right, "div", "right")
-        ? `<mrow><mo>(</mo>${right}<mo>)</mo></mrow>`
+        ? `<mo>(</mo>${right}<mo>)</mo>`
         : right;
       return `<mrow>${leftWrapped}<mo>∶</mo>${rightWrapped}</mrow>`;
     }
@@ -169,6 +173,22 @@ function needsParens(operand, parentOp, position) {
     pow: 4,
   };
 
+  // Special case: wrap negative values in parens when operated upon
+  if (isNegativeValue(operand) /* && position === "right" */) {
+    return true;
+  }
+
+  // Special case: compound structures as base of power need parens
+  if (
+    parentOp === "pow" &&
+    position === "left" &&
+    (operand.type === "frac" ||
+      operand.type === "mixed" ||
+      operand.type === "root")
+  ) {
+    return true;
+  }
+
   // Atoms never need parens
   if (!(operand.type in precedence)) {
     return false;
@@ -194,4 +214,22 @@ function needsParens(operand, parentOp, position) {
   }
 
   return false;
+}
+
+/**
+ *
+ * @param {MathExpr} operand
+ * @returns {boolean}
+ */
+function isNegativeValue(operand) {
+  switch (operand.type) {
+    case "negate":
+      return true;
+    case "num":
+      return operand.value < 0;
+    case "mixed":
+      return operand.whole < 0;
+    default:
+      return false;
+  }
 }

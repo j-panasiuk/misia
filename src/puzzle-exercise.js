@@ -3,7 +3,7 @@
 import { randomPuzzle } from "./7th-grade/puzzles";
 import { renderAnswer, renderExpression } from "./exercise-renderer";
 
-class PuzzleComponent extends HTMLElement {
+class PuzzleExercise extends HTMLElement {
   puzzle = randomPuzzle();
 
   /** @type {undefined|Solved} */
@@ -26,7 +26,6 @@ class PuzzleComponent extends HTMLElement {
   #handleKeyUp(/** @type {KeyboardEvent} */ evt) {
     switch (evt.key) {
       case "Enter": {
-        console.log("ENTER", document.activeElement);
         // Ensure we don't insert a newline by pressing enter as we type.
         if (document.activeElement?.hasAttribute("contenteditable")) {
           evt.preventDefault();
@@ -93,5 +92,5 @@ class PuzzleComponent extends HTMLElement {
   }
 }
 
-if (!customElements.get("puzzle-component"))
-  customElements.define("puzzle-component", PuzzleComponent);
+if (!customElements.get("puzzle-exercise"))
+  customElements.define("puzzle-exercise", PuzzleExercise);
