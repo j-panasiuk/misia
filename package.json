@@ -2,6 +2,10 @@
   "name": "misia",
   "type": "module",
   "private": true,
+  "scripts": {
+    "dev": "bun --hot ./src/*.html",
+    "build": "bun build --outdir=out ./**/*.html"
+  },
   "devDependencies": {
     "@types/bun": "latest"
   },
