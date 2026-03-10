@@ -1,6 +1,9 @@
 // @ts-check
 
-import { exerciseProgression, isExerciseId } from "./7th-grade/exercises";
+import {
+  exerciseProgression,
+  isExerciseId,
+} from "./7th-grade/exam-exercises.js";
 
 class ExamView extends HTMLElement {
   constructor() {
@@ -66,22 +69,22 @@ class ExamView extends HTMLElement {
     const links = exerciseProgression.map((exId) => {
       url.hash = exId;
 
-      let link = document.createElement("a");
-      link.innerText = exId;
-      link.href = url.href;
-      if (exId === this.exerciseId) link.setAttribute("aria-current", "page");
-      return link;
+      let a = document.createElement("a");
+      a.innerText = exId;
+      a.href = url.href;
+      if (exId === this.exerciseId) a.setAttribute("aria-current", "page");
+      return a;
     });
 
     const nextExerciseId = this.nextExerciseId;
     if (nextExerciseId) {
       url.hash = nextExerciseId;
 
-      const nextLink = document.createElement("a");
-      nextLink.innerText = "Next >";
-      nextLink.href = url.href;
-      nextLink.style = "margin-left: auto";
-      links.push(nextLink);
+      const a = document.createElement("a");
+      a.innerText = "Next >";
+      a.href = url.href;
+      a.style = "margin-left: auto";
+      links.push(a);
     }
 
     this.$("footer > nav").replaceChildren(...links);
@@ -90,8 +93,10 @@ class ExamView extends HTMLElement {
   // -- HELPERS --
 
   get hashExerciseId() {
-    const exId = location.hash.replace("#", "");
-    if (isExerciseId(exId)) return exId;
+    if (location.hash) {
+      const exId = location.hash.replace("#", "");
+      if (isExerciseId(exId)) return exId;
+    }
   }
 
   get nextExerciseId() {

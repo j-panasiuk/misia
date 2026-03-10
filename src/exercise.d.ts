@@ -25,7 +25,7 @@
  * }
  */
 interface Exercise {
-  instruction: ContentSegment[];
+  instruction?: ContentSegment[];
   primaryExpr?: MathExpr | null; // Optional main expression (for reference)
   steps?: MathExpr[]; // Optional solution steps
   answer: number | string | MathExpr; // Can be numeric, string, or expression

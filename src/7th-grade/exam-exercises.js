@@ -1,6 +1,25 @@
 // @ts-check
 
-import { add, div, frac, m, mul, neg, n, pow, sub } from "../math-expr-utils";
+import {
+  add,
+  div,
+  frac,
+  m,
+  mul,
+  neg,
+  n,
+  pow,
+  sub,
+} from "../math-expr-utils.js";
+
+/**
+ * @extends Exercise
+ * @typedef {Object} ExamExercise
+ * @property {ContentSegment[]} instruction
+ * @property {MathExpr} primaryExpr
+ * @property {MathExpr[]} steps
+ * @property {string|MathExpr} answer
+ */
 
 // -- EXERCISE IDS --
 
@@ -23,9 +42,9 @@ export function isExerciseId(val) {
 
 /**
  * @todo localization
- * @type {Record<ExId, () => Exercise>}
+ * @type {Record<ExId, () => ExamExercise>}
  */
-export const exercises = {
+export const examExerciseTemplates = {
   "1a": () => {
     return {
       instruction: ["Oblicz"],
@@ -180,9 +199,8 @@ export const exercises = {
           neg(frac(n(8), n(125))), // (-2/5)³ = -8/125 → subtracting negative = adding positive
         ),
         add(frac(n(4), n(25)), frac(n(8), n(125))),
-        frac(n(28), n(125)), // Common denominator: 4/25 = 20/125 → 20/125 + 8/125 = 28/125
       ],
-      answer: 28 / 125,
+      answer: frac(n(28), n(125)),
     };
   },
   "4b": () => {
@@ -257,5 +275,5 @@ export const exercises = {
 // @todo allow to select a subset of exercises (only "1a", "2a", "3a", etc)
 // @todo allow to filter exercises by tags ("arithmetic", "algebra" etc)
 export const exerciseProgression = /** @type {[ExId, ...ExId[]]} */ (
-  Object.keys(exercises).sort()
+  Object.keys(examExerciseTemplates).sort()
 );

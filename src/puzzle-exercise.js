@@ -1,7 +1,7 @@
 // @ts-check
 
-import { randomPuzzle } from "./7th-grade/puzzles";
-import { renderAnswer, renderExpression } from "./exercise-renderer";
+import { randomPuzzle } from "./7th-grade/puzzle-exercises.js";
+import { renderAnswer, renderExpression } from "./exercise-renderer.js";
 
 class PuzzleExercise extends HTMLElement {
   puzzle = randomPuzzle();

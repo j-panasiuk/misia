@@ -1,12 +1,15 @@
 // @ts-check
 
-import { exercises, isExerciseId } from "./7th-grade/exercises";
+import {
+  examExerciseTemplates,
+  isExerciseId,
+} from "./7th-grade/exam-exercises.js";
 import {
   renderAnswer,
   renderExpression,
   renderInstruction,
   renderSteps,
-} from "./exercise-renderer";
+} from "./exercise-renderer.js";
 
 class ExamExercise extends HTMLElement {
   constructor() {
@@ -56,7 +59,7 @@ class ExamExercise extends HTMLElement {
         "=",
       );
 
-    if (revealSolution && exercise.steps?.length)
+    if (revealSolution && exercise.steps.length)
       this.$("solution").innerHTML = renderSteps(exercise.steps);
 
     if (revealSolution)
@@ -69,9 +72,12 @@ class ExamExercise extends HTMLElement {
     const exerciseId = this.getAttribute("exercise");
     if (!isExerciseId(exerciseId))
       throw new Error(`bad exercise id: ${exerciseId}`);
-    if (!(exerciseId in exercises) || !exercises[exerciseId])
+    if (
+      !(exerciseId in examExerciseTemplates) ||
+      !examExerciseTemplates[exerciseId]
+    )
       throw new Error(`unknown exercise id ${exerciseId}`);
-    const exercise = exercises[exerciseId]();
+    const exercise = examExerciseTemplates[exerciseId]();
     return exercise;
   }
 
