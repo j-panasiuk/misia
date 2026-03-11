@@ -1,12 +1,14 @@
 // @ts-check
 
-import { add, div, eq, frac, m, mul, n, pow, sub } from "../math-expr-utils.js";
+import { eq, n, operation } from "../math/ast.js";
+import { evaluate } from "../math/evaluate.js";
+import { random, sample } from "../math/random.js";
 
 /**
  * @extends Exercise
  * @typedef {Object} PuzzleExercise
  * @property {MathExpr} primaryExpr
- * @property {number|string} answer
+ * @property {number} answer
  */
 
 /**
@@ -64,71 +66,4 @@ export function randomPuzzle() {
   const puzzleTemplate = sample(puzzleExerciseTemplates);
   if (!puzzleTemplate) throw new Error("no puzzles found to choose from!");
   return puzzleTemplate();
-}
-
-// -- HELPERS --
-
-/**
- * @type {Record<BinaryOp, (a: MathExpr, b: MathExpr) => MathExpr>}
- */
-const operation = {
-  add,
-  sub,
-  mul,
-  div,
-  pow,
-};
-
-/**
- * @type {Record<BinaryOp, (a: number, b: number) => number>}
- */
-const evaluate = {
-  add: (a, b) => a + b,
-  sub: (a, b) => a - b,
-  mul: (a, b) => a * b,
-  div: (a, b) => a / b,
-  pow: (a, b) => a ** b,
-};
-
-const random = {
-  sample,
-  int(min = 0, max = 10) {
-    return min + Math.floor(Math.random() * (max - min));
-  },
-  prime() {
-    return sample([2, 3, 5, 7, 11, 13, 17, 19]);
-  },
-  op(/** @type {[BinaryOp, ...BinaryOp[]]} */ ops) {
-    return sample(
-      /** @type {[BinaryOp]} */ (
-        Object.keys(evaluate).filter((op) =>
-          ops.includes(/** @type {BinaryOp} */ (op)),
-        )
-      ),
-    );
-  },
-};
-
-/**
- * Picks a random element from a non-empty array.
- *
- * @template T - The type of elements in the array
- * @param {[T, ...T[]]} values - A non-empty array to sample from
- * @returns {T} A randomly selected element from the array
- * @throws {Error} If the array is empty
- *
- * @example
- * const numbers = [1, 2, 3, 4, 5];
- * const randomNum = sample(numbers);
- *
- * @example
- * const fruits = ['apple', 'banana', 'orange'];
- * const randomFruit = sample(fruits);
- */
-function sample(values) {
-  if (values.length === 0) {
-    throw new Error("Cannot sample from an empty array");
-  }
-  const index = Math.floor(Math.random() * values.length);
-  return /** @type {T} */ (values[index]);
 }

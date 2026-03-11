@@ -41,19 +41,15 @@ export function renderExpression(expr, trailing) {
 }
 
 /**
- * Renders intermediate exercise steps to HTML.
- * @param {Exclude<Exercise['steps'], undefined>} steps
+ * Renders intermediate exercise step to HTML.
+ * @param {MathExpr} step
  * @returns {string} HTML markup
  */
-export function renderSteps(steps) {
-  return steps
-    .map((step) => {
-      let html = `<step>`;
-      html += renderExpression(step, "=");
-      html += `</step>`;
-      return html;
-    })
-    .join("");
+export function renderStep(step) {
+  let html = `<step>`;
+  html += renderExpression(step, "=");
+  html += `</step>`;
+  return html;
 }
 
 /**
@@ -62,7 +58,8 @@ export function renderSteps(steps) {
  * @returns {string} HTML markup
  */
 export function renderAnswer(answer) {
-  return typeof answer === "object"
-    ? `<math display="block"><mrow>${toMathML(answer)}</mrow>`
-    : String(answer);
+  if (typeof answer === "string") return answer;
+  return `<math display="block"><mrow>${
+    typeof answer === "number" ? `<mn>${answer}</mn>` : toMathML(answer)
+  }</mrow>`;
 }

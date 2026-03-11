@@ -6,16 +6,14 @@ import { renderAnswer, renderExpression } from "./exercise-renderer.js";
 class PuzzleExercise extends HTMLElement {
   puzzle = randomPuzzle();
 
-  /** @type {undefined|Solved} */
-  solved = undefined;
-
   constructor() {
     super();
+    this.render = this.#render();
     this.handleKeyUp = this.#handleKeyUp.bind(this);
   }
 
   connectedCallback() {
-    this.#render();
+    this.render.next();
     window.addEventListener("keypress", this.handleKeyUp);
   }
 
@@ -30,65 +28,70 @@ class PuzzleExercise extends HTMLElement {
         if (document.activeElement?.hasAttribute("contenteditable")) {
           evt.preventDefault();
         }
-        return this.solved ? this.#nextExercise() : this.#checkAnswer();
+
+        // Check if user has filled in a numeric value
+        if (Number.isNaN(this.#userAnswerValue)) return;
+
+        const { done } = this.render.next();
+        if (done) this.#nextExercise();
+
+        break;
       }
     }
   }
 
   // -- RENDERING --
 
+  *#render() {
+    const { primaryExpr, answer } = this.puzzle;
+
+    // 1. Reveal exercise
+    this.$("expression").innerHTML = renderExpression(primaryExpr);
+    window.requestAnimationFrame(() => this.$userAnswer?.focus());
+    yield;
+
+    // 2. Reveal answer
+    this.$("answer").innerHTML = renderAnswer(answer);
+    this.$userAnswer?.blur();
+    this.$userAnswer?.classList.add(this.#checkAnswer());
+    yield;
+  }
+
   #nextExercise() {
     this.replaceWith(document.createElement(this.tagName));
   }
 
-  #checkAnswer() {
-    const userAnswer = this.$("[contenteditable]").textContent.trim();
-    const userAnswerValue = userAnswer ? Number(userAnswer) : NaN;
-
-    if (Number.isFinite(userAnswerValue)) {
-      this.solved =
-        userAnswerValue === this.puzzle.answer ? "correct" : "incorrect";
-
-      this.#render();
-    }
-  }
-
-  #render() {
-    if (!this.children.length) {
-      this.appendChild(document.createElement("expression"));
-      this.appendChild(document.createElement("answer"));
-    }
-
-    const expression = this.$("expression");
-
-    if (!expression.children.length) {
-      expression.innerHTML = renderExpression(this.puzzle.primaryExpr);
-    }
-
-    const answer = this.$("answer");
-    const editable = this.$("[contenteditable]");
-
-    if (!this.solved) {
-      requestAnimationFrame(() => editable.focus());
-    } else {
-      answer.innerHTML = renderAnswer(this.puzzle.answer);
-      editable.blur();
-      editable.classList.add(this.solved);
-    }
-  }
-
   // -- HELPERS --
 
+  get $userAnswer() {
+    return /** @type {HTMLElement|null} */ (
+      this.querySelector("[contenteditable]")
+    );
+  }
+
+  get #userAnswerValue() {
+    const userAnswer = this.$userAnswer?.textContent.trim();
+    return userAnswer ? Number(userAnswer) : NaN;
+  }
+
+  #checkAnswer() {
+    return this.#userAnswerValue === this.puzzle.answer
+      ? "correct"
+      : "incorrect";
+  }
+
   /**
-   * @param {"expression"|"answer"|"[contenteditable]"} selector
+   * @param {"expression"|"answer"} selector
    * @returns {HTMLElement} element matching selector
    * @throws when element not found
    */
   $(selector) {
     const el = this.querySelector(selector);
-    if (!(el instanceof HTMLElement))
-      throw new Error(`"${selector}" element is missing!`);
-    return el;
+    return el instanceof HTMLElement
+      ? el
+      : this.appendChild(
+          /** @type {HTMLElement} */ (document.createElement(selector)),
+        );
   }
 }
 

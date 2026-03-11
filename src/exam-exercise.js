@@ -1,24 +1,25 @@
 // @ts-check
 
 import {
+  assertValidExerciseId,
   examExerciseTemplates,
-  isExerciseId,
 } from "./7th-grade/exam-exercises.js";
 import {
   renderAnswer,
   renderExpression,
   renderInstruction,
-  renderSteps,
+  renderStep,
 } from "./exercise-renderer.js";
 
 class ExamExercise extends HTMLElement {
   constructor() {
     super();
+    this.render = this.#render();
     this.handleKeyUp = this.#handleKeyUp.bind(this);
   }
 
   connectedCallback() {
-    this.#render(false);
+    this.render.next();
     window.addEventListener("keyup", this.handleKeyUp);
   }
 
@@ -29,11 +30,8 @@ class ExamExercise extends HTMLElement {
   #handleKeyUp(/** @type {KeyboardEvent} */ evt) {
     switch (evt.key) {
       case "Enter": {
-        if (!this.isAnswerRevealed) {
-          this.#render(true);
-        } else {
-          window.dispatchEvent(new CustomEvent("next"));
-        }
+        const { done } = this.render.next();
+        if (done) window.dispatchEvent(new CustomEvent("next"));
         break;
       }
     }
@@ -41,48 +39,31 @@ class ExamExercise extends HTMLElement {
 
   // -- RENDERING --
 
-  #render(/** @type {boolean} */ revealSolution) {
-    const exercise = this.exercise;
+  *#render() {
+    const { instruction, primaryExpr: expr, steps, answer } = this.#exercise;
 
-    if (!this.children.length) {
-      this.appendChild(document.createElement("instruction"));
-      this.appendChild(document.createElement("expression"));
-      this.appendChild(document.createElement("solution"));
-      this.appendChild(document.createElement("answer"));
+    // 1. Reveal exercise instruction
+    this.$("instruction").innerHTML = renderInstruction(instruction);
+    if (expr) this.$("expression").innerHTML = renderExpression(expr, "=");
+    yield;
+
+    // 2. Reveal solution steps, one at a time
+    for (const step of steps) {
+      this.$("solution").insertAdjacentHTML("beforeend", renderStep(step));
+      yield;
     }
 
-    this.$("instruction").innerHTML = renderInstruction(exercise.instruction);
-
-    if (exercise.primaryExpr)
-      this.$("expression").innerHTML = renderExpression(
-        exercise.primaryExpr,
-        "=",
-      );
-
-    if (revealSolution && exercise.steps.length)
-      this.$("solution").innerHTML = renderSteps(exercise.steps);
-
-    if (revealSolution)
-      this.$("answer").innerHTML = renderAnswer(exercise.answer);
+    // 3. Reveal answer
+    this.$("answer").innerHTML = renderAnswer(answer);
+    yield;
   }
 
   // -- HELPERS --
 
-  get exercise() {
+  get #exercise() {
     const exerciseId = this.getAttribute("exercise");
-    if (!isExerciseId(exerciseId))
-      throw new Error(`bad exercise id: ${exerciseId}`);
-    if (
-      !(exerciseId in examExerciseTemplates) ||
-      !examExerciseTemplates[exerciseId]
-    )
-      throw new Error(`unknown exercise id ${exerciseId}`);
-    const exercise = examExerciseTemplates[exerciseId]();
-    return exercise;
-  }
-
-  get isAnswerRevealed() {
-    return this.$("answer").hasChildNodes();
+    assertValidExerciseId(exerciseId);
+    return examExerciseTemplates[exerciseId]();
   }
 
   /**
@@ -92,9 +73,11 @@ class ExamExercise extends HTMLElement {
    */
   $(selector) {
     const el = this.querySelector(selector);
-    if (!(el instanceof HTMLElement))
-      throw new Error(`"${selector}" element is missing!`);
-    return el;
+    return el instanceof HTMLElement
+      ? el
+      : this.appendChild(
+          /** @type {HTMLElement} */ (document.createElement(selector)),
+        );
   }
 }
 

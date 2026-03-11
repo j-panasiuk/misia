@@ -1,16 +1,6 @@
 // @ts-check
 
-import {
-  add,
-  div,
-  frac,
-  m,
-  mul,
-  neg,
-  n,
-  pow,
-  sub,
-} from "../math-expr-utils.js";
+import { sub, n, frac, mul, add, m, neg, pow, div } from "../math/ast.js";
 
 /**
  * @extends Exercise
@@ -38,11 +28,25 @@ export function isExerciseId(val) {
   return typeof val === "string" && /^[0-9]+[a-z]$/.test(val);
 }
 
+/**
+ * Assert that input matches existing exercise id ("5a" etc)
+ * @param {unknown} val
+ * @returns {asserts val is keyof typeof examExerciseTemplates}
+ */
+export function assertValidExerciseId(val) {
+  if (!isExerciseId(val)) {
+    throw new Error(`bad exercise id format: ${val}`);
+  }
+  if (!(val in examExerciseTemplates)) {
+    throw new Error(`unknown exercise id ${val}`);
+  }
+}
+
 // -- 7th GRADE EXERCISES --
 
 /**
  * @todo localization
- * @type {Record<ExId, () => ExamExercise>}
+ * @satisfies {Record<ExId, () => ExamExercise>}
  */
 export const examExerciseTemplates = {
   "1a": () => {
