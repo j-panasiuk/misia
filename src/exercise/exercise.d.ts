@@ -26,7 +26,7 @@
  */
 interface Exercise {
   instruction?: ContentSegment[];
-  primaryExpr?: MathExpr | null; // Optional main expression (for reference)
+  primaryExpr?: MathExpr; // Optional main expression (for reference)
   steps?: MathExpr[]; // Optional solution steps
   answer: number | string | MathExpr; // Can be numeric, string, or expression
 }
@@ -46,5 +46,3 @@ interface MathSegment {
   expr: MathExpr;
   display?: boolean; // If true, render as display math (block); otherwise inline
 }
-
-type Solved = "correct" | "incorrect";

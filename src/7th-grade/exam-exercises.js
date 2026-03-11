@@ -32,6 +32,7 @@ export function isExerciseId(val) {
  * Assert that input matches existing exercise id ("5a" etc)
  * @param {unknown} val
  * @returns {asserts val is keyof typeof examExerciseTemplates}
+ * @throws {Error}
  */
 export function assertValidExerciseId(val) {
   if (!isExerciseId(val)) {

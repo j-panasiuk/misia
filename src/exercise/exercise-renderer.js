@@ -1,6 +1,6 @@
 // @ts-check
 
-import { toMathML } from "./math-expr-renderer.js";
+import { toMathML } from "../math/mathml-renderer.js";
 
 /**
  * Renders an exercise instruction (mixed text and math) to HTML.

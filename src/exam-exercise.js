@@ -9,7 +9,7 @@ import {
   renderExpression,
   renderInstruction,
   renderStep,
-} from "./exercise-renderer.js";
+} from "./exercise/exercise-renderer.js";
 
 class ExamExercise extends HTMLElement {
   constructor() {
