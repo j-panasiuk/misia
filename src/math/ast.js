@@ -19,6 +19,15 @@ export function n(a) {
 }
 
 /**
+ * Ensure value is an expression.
+ * @param {number|MathExpr} a
+ * @returns {MathExpr}
+ */
+function expr(a) {
+  return typeof a === "number" ? n(a) : a;
+}
+
+/**
  * Create mixed number value.
  * @param {number} a
  * @param {number} b
@@ -31,87 +40,87 @@ export function m(a, b, c) {
 
 /**
  * Create a fraction value.
- * @param {MathExpr} a
- * @param {MathExpr} b
+ * @param {number|MathExpr} a
+ * @param {number|MathExpr} b
  * @returns {FracNode}
  */
 export function frac(a, b) {
-  return { type: "frac", num: a, den: b };
+  return { type: "frac", num: expr(a), den: expr(b) };
 }
 
 /**
  * Negate an expression.
- * @param {MathExpr} a
+ * @param {number|MathExpr} a
  * @returns {NegateNode}
  */
 export function neg(a) {
-  return { type: "negate", operand: a };
+  return { type: "negate", operand: expr(a) };
 }
 
 /**
  * Create addition of two expressions.
- * @param {MathExpr} a
- * @param {MathExpr} b
+ * @param {number|MathExpr} a
+ * @param {number|MathExpr} b
  * @returns {BinaryOpNode<'add'>}
  */
 export function add(a, b) {
-  return { type: "add", left: a, right: b };
+  return { type: "add", left: expr(a), right: expr(b) };
 }
 
 /**
  * Create subtraction of two expressions.
- * @param {MathExpr} a
- * @param {MathExpr} b
+ * @param {number|MathExpr} a
+ * @param {number|MathExpr} b
  * @returns {BinaryOpNode<'sub'>}
  */
 export function sub(a, b) {
-  return { type: "sub", left: a, right: b };
+  return { type: "sub", left: expr(a), right: expr(b) };
 }
 
 /**
  * Create multiplication of two expressions.
- * @param {MathExpr} a
- * @param {MathExpr} b
+ * @param {number|MathExpr} a
+ * @param {number|MathExpr} b
  * @returns {BinaryOpNode<'mul'>}
  */
 export function mul(a, b) {
-  return { type: "mul", left: a, right: b };
+  return { type: "mul", left: expr(a), right: expr(b) };
 }
 
 /**
  * Create division of two expressions.
- * @param {MathExpr} a
- * @param {MathExpr} b
+ * @param {number|MathExpr} a
+ * @param {number|MathExpr} b
  * @returns {BinaryOpNode<'div'>}
  */
 export function div(a, b) {
-  return { type: "div", left: a, right: b };
+  return { type: "div", left: expr(a), right: expr(b) };
 }
 
 /**
  * Create a power expression.
- * @param {MathExpr} a
- * @param {MathExpr} b
+ * @param {number|MathExpr} a
+ * @param {number|MathExpr} b
  * @returns {BinaryOpNode<'pow'>}
  */
 export function pow(a, b) {
-  return { type: "pow", left: a, right: b };
+  return { type: "pow", left: expr(a), right: expr(b) };
 }
 
 /**
  * Create equality expression.
- * @param {MathExpr} a
- * @param {MathExpr} b
+ * @param {number|MathExpr} a
+ * @param {number|MathExpr} b
  * @returns {EqNode}
  */
 export function eq(a, b) {
-  return { type: "eq", left: a, right: b };
+  return { type: "eq", left: expr(a), right: expr(b) };
 }
 
 // -- BINARY OPERATIONS --
 
 /**
- * @satisfies {Record<BinaryOp, (a: MathExpr, b: MathExpr) => MathExpr>}
+ * @satisfies {Record<BinaryOp, (a: number|MathExpr, b: number|MathExpr) => MathExpr>}
  */
 export const operation = {
   add,
