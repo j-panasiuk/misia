@@ -1,6 +1,18 @@
 // @ts-check
 
 import { sub, n, frac, mul, add, m, neg, pow, div } from "../math/ast.js";
+import {
+  decimalToFraction,
+  fractionToDecimal,
+  lcm,
+  multiplyFractions,
+  scaleFraction,
+  sign,
+  simplifyBeforeMultiplication,
+  simplifyFraction,
+  subtractFractions,
+} from "../math/evaluate.js";
+import { random, sample } from "../math/random.js";
 
 /**
  * @extends Exercise
@@ -51,75 +63,118 @@ export function assertValidExerciseId(val) {
  */
 export const examExerciseTemplates = {
   "1a": () => {
+    const a = random.int(2, 9);
+    const c = random.prime();
+    const b = random.int(1, c - 1);
     return {
       instruction: ["Oblicz"],
-      primaryExpr: sub(n(4), frac(n(3), n(5))),
-      steps: [
-        sub(frac(mul(n(4), n(5)), n(5)), frac(n(3), n(5))),
-        frac(sub(n(20), n(3)), n(5)),
-      ],
-      answer: frac(n(17), n(5)),
+      primaryExpr: sub(a, frac(b, c)),
+      steps: [sub(frac(mul(a, c), c), frac(b, c)), frac(sub(a * c, b), c)],
+      // @todo show alternative answer formatting
+      answer: frac(n(a * c - b), c),
     };
   },
   "1b": () => {
+    const a1 = random.int(-8, -1);
+    const a2 = random.prime();
+    const a3 = a2 - 1;
+    const b1 = random.int(1, 7);
+    const b2 = random.prime(); // @todo b2 !== a2
+    const b3 = random.int(1, b2 - 1);
+    const A1 = Math.abs(a1);
     return {
       instruction: ["Oblicz"],
-      primaryExpr: add(m(-4, 4, 5), m(1, 2, 3)),
+      primaryExpr: add(m(a1, a3, a2), m(b1, b3, b2)),
       steps: [
         add(
-          neg(frac(add(mul(n(4), n(5)), n(4)), n(5))),
-          frac(add(mul(n(1), n(3)), n(2)), n(3)),
+          neg(frac(add(mul(A1, a2), a3), a2)),
+          frac(add(mul(b1, b2), b3), b2),
         ),
-        add(neg(frac(n(24), n(5))), frac(n(5), n(3))),
-        add(neg(frac(mul(n(24), n(3)), n(15))), frac(mul(n(5), n(5)), n(15))),
-        frac(add(n(-72), n(25)), n(15)),
+        add(neg(frac(A1 * a2 + a3, a2)), frac(b1 * b2 + b3, b2)),
+        add(
+          neg(frac(mul(A1 * a2 + a3, b2), mul(a2, b2))),
+          frac(mul(a2, A1 * a2 + a3), mul(a2, b2)),
+        ),
+        frac(add(-(A1 * a2 + a3) * b2, (A1 * a2 + a3) * a2), a2 * b2),
       ],
       // @todo show alternative answer formatting
-      answer: frac(n(-47), n(15)), // m(n(-3), n(2), n(15))
+      answer: frac(-(A1 * a2 + a3) * b2 + (A1 * a2 + a3) * a2, a2 * b2),
     };
   },
   "1c": () => {
+    const { a, b, c } =
+      /** @type {{ a: [number, number, number], b: number, c: [number, number] }} */ (
+        sample([
+          { a: [2, 3, 4], b: 0.7, c: [1, 2] },
+          { a: [1, 5, 6], b: 0.75, c: [1, 8] },
+          { a: [3, 1, 3], b: 2.25, c: [11, 12] },
+          { a: [4, 2, 7], b: 1.6, c: [2, 5] },
+        ])
+      );
+
+    const B1 = decimalToFraction(b);
+    const d = lcm(B1[1], c[1]);
+
+    const A = /** @type {[number, number]} */ ([a[0] * a[2] + a[1], a[2]]);
+    const B = scaleFraction(B1, d);
+    const C = scaleFraction(c, d);
+    const D = /** @type {[number, number]} */ ([B[0] - C[0], d]);
+
+    let steps = [
+      mul(frac(add(mul(a[0], a[2]), a[1]), a[2]), sub(frac(...B1), frac(...c))),
+      mul(frac(...A), sub(frac(...B), frac(...C))),
+      mul(frac(...A), frac(...D)),
+    ];
+
+    // Optional step - reduce terms before multiplication
+    const [A1, D1] = simplifyBeforeMultiplication(A, D);
+    if (A1[0] !== A[0] || D1[0] !== D[0]) {
+      steps.push(mul(frac(...A1), frac(...D1)));
+    }
+
     return {
       instruction: ["Oblicz"],
-      primaryExpr: mul(m(2, 3, 4), sub(n(0.7), frac(n(1), n(2)))),
-      steps: [
-        mul(
-          frac(add(mul(n(2), n(4)), n(3)), n(4)),
-          sub(frac(n(7), n(10)), frac(n(1), n(2))),
-        ),
-        mul(frac(n(11), n(4)), sub(frac(n(7), n(10)), frac(n(5), n(10)))),
-        mul(frac(n(11), n(4)), frac(n(2), n(10))),
-        mul(frac(n(11), n(4)), frac(n(1), n(5))),
-      ],
-      answer: frac(n(11), n(20)), // n(0.55)
+      primaryExpr: mul(m(...a), sub(b, frac(...c))),
+      steps,
+      answer: frac(...multiplyFractions(A1, D1)),
     };
   },
   "1d": () => {
+    const { a, b, c, d } =
+      /** @type {{ a: [number, number], b: number, c: [number, number], d: number }} */ (
+        sample([
+          { a: [1, 4], b: 6, c: [1, 20], d: -3 },
+          { a: [1, 5], b: 10, c: [2, 25], d: -2 },
+          { a: [1, 4], b: 8, c: [3, 100], d: 4 },
+          { a: [5, 6], b: 9, c: [77, 100], d: -7 },
+        ])
+      );
+
+    const A = /** @type {[number, number]} */ ([a[0] ** 2, a[1] ** 2]);
+    const AB = multiplyFractions(A, [b, 1]);
+    const C = fractionToDecimal(c);
+    const CD = multiplyFractions(c, [c[1], 1]);
+    const ABCD = subtractFractions(AB, CD);
+    const X = simplifyFraction([Math.abs(ABCD[0]), Math.abs(ABCD[1] * d)]);
+
     return {
       instruction: ["Oblicz"],
       primaryExpr: frac(
-        sub(
-          mul(pow(neg(frac(n(1), n(4))), n(2)), n(6)),
-          div(n(0.05), frac(n(1), n(20))),
-        ),
-        n(-3),
+        sub(mul(pow(neg(frac(...a)), 2), b), div(C, frac(1, c[1]))),
+        d,
       ),
       steps: [
+        frac(sub(mul(frac(...A), b), div(frac(...c), frac(1, c[1]))), d),
+        frac(sub(frac(...AB), mul(frac(...c), frac(c[1], n(1)))), d),
+        frac(sub(frac(...AB), frac(...CD)), d),
         frac(
-          sub(
-            mul(frac(n(1), n(16)), n(6)),
-            div(frac(n(1), n(20)), frac(n(1), n(20))),
-          ),
-          n(-3),
+          sign(ABCD) === -1
+            ? neg(frac(Math.abs(ABCD[0]), Math.abs(ABCD[1])))
+            : frac(Math.abs(ABCD[0]), Math.abs(ABCD[1])),
+          d,
         ),
-        frac(
-          sub(frac(n(6), n(16)), mul(frac(n(1), n(20)), frac(n(20), n(1)))),
-          n(-3),
-        ),
-        frac(sub(frac(n(3), n(8)), n(1)), n(-3)),
-        frac(neg(frac(n(5), n(8))), n(-3)),
       ],
-      answer: frac(n(5), n(24)),
+      answer: sign(ABCD) * Math.sign(d) === -1 ? neg(frac(...X)) : frac(...X),
     };
   },
   "2a": () => {
