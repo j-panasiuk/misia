@@ -40,9 +40,9 @@ export function sign(frac) {
  * @returns {[number, number]} A fraction object with numerator and denominator in lowest terms.
  *
  * @example
- * decimalToFraction(0.5);   // frac(1, 2)
- * decimalToFraction(0.75);  // frac(3, 4)
- * decimalToFraction(0.333); // frac(333, 1000)
+ * decimalToFraction(0.5);   // [1, 2]
+ * decimalToFraction(0.75);  // [3, 4]
+ * decimalToFraction(0.333); // [333, 1000]
  *
  * @note
  * Repeating decimals are approximated based on floating-point precision.
@@ -54,8 +54,8 @@ export function decimalToFraction(dec) {
   if (Number.isInteger(dec)) return [dec, 1];
 
   // Count decimal places
-  const decimalPlaces = (dec.toString().split(".") || "").length;
-  const denominator = Math.pow(10, decimalPlaces);
+  const [__, decimalPart] = dec.toString().split(".");
+  const denominator = Math.pow(10, decimalPart?.length || 0);
   let numerator = Math.round(dec * denominator);
 
   // Simplify by finding GCD
@@ -74,9 +74,9 @@ export function decimalToFraction(dec) {
  * @returns {number} The decimal representation of the fraction
  *
  * @example
- * fractionToDecimal(frac(1, 2));   // 0.5
- * fractionToDecimal(frac(3, 4));   // 0.75
- * fractionToDecimal(frac(1, 3));   // 0.3333333333333333
+ * fractionToDecimal([1, 2]);    // 0.5
+ * fractionToDecimal([3, 4]);    // 0.75
+ * fractionToDecimal([1, 3]);    // 0.3333333333333333
  */
 export function fractionToDecimal(frac) {
   const [num, den] = frac;
@@ -125,7 +125,7 @@ export function scaleFraction(fraction, newDenominator) {
  * gcd(17, 5);   // 1
  */
 export function gcd(a, b) {
-  return b === 0 ? a : gcd(b, a % b);
+  return b === 0 ? Math.abs(a) : gcd(Math.abs(b), Math.abs(a % b));
 }
 
 /**
@@ -233,10 +233,13 @@ export function subtractFractions(frac1, frac2) {
  *
  * @example
  * simplifyBeforeMultiplication([4, 8], [6, 9]);
- * // → [[1, 2], [2, 3]] (first simplify each: [1,2] and [2,3], then no cross-cancellation)
+ * // → [[1, 1], [1, 3]] (simplify each: [1/2] and [2/3], then cross-cancel 2: [1/1] and [1/3])
  *
  * simplifyBeforeMultiplication([6, 8], [4, 9]);
- * // → [[3, 2], [1, 9]] (simplify: [3,4] and [4,9] → then cancel 4 across → [3,2] and [1,9])
+ * // → [[1, 1], [1, 3]] (simplify: [3/4] and [4/9], then cross-cancel: [1/1] and [1/3])
+ *
+ * simplifyBeforeMultiplication([1, 3], [2, 5]);
+ * // → [[1, 3], [2, 5]] (already simplified, no cross-cancellation possible)
  */
 export function simplifyBeforeMultiplication(frac1, frac2) {
   let [num1, den1] = frac1;
